@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=edge_v3
+POSTGRES_USER=uokMAqcgZeleucIcxhEVisWHklzuylkF
+POSTGRES_PASSWORD=QsSga2kcKc3E49MmxHagCsGw7cIFg9X5kqa2OAjmrXglfVWKYvzL40fVS8KiGjIN
