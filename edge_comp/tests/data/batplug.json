@@ -1,0 +1,20 @@
+{
+  "id": "ip+timestamp",
+  "ip": "ip",
+  "type": "BATPLUG",
+  "date": "date",
+  "values" :
+    {
+    "state":0,
+    "meter":
+    {
+      "UL": 1,
+      "IL": 1,
+      "PACT": 1,
+      "PAPP": 1,
+      "EACT": 1,
+      "EAPP": 1
+    }
+}
+}
+

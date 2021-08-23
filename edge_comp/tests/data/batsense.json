@@ -1,0 +1,17 @@
+{
+  "id": "ip+timestamp",
+  "ip": "ip",
+  "type": "BATSENSE",
+  "date": "date",
+  "rssi": "rssi",
+  "values" :
+    {
+    "TEMP":0,
+    "HUM": 0,
+    "LUM":0,
+    "BAT": 0,
+    "PRES":0,
+    "OBS": 0
+}
+}
+

@@ -1,0 +1,70 @@
+{
+  "id": "ip+timestamp",
+  "ip": "ip",
+  "type": "BATMETER",
+  "date": "date",
+  "calibration":
+    {
+      "dcOffset": "dcOffset",
+      "Vcal": "Vcal",
+      "date": "date",
+      "Ical": " Ical"
+    },
+  "values" :
+    {
+    "line1":
+    {
+      "UL": 1,
+      "IL": 1,
+      "PACT": 1,
+      "PAPP": 1,
+      "EACT": 1,
+      "EAPP": 1
+    },
+    "line2":
+    {
+      "UL": 1,
+      "IL": 1,
+      "PACT": 1,
+      "PAPP": 1,
+      "EACT": 1,
+      "EAPP": 1
+    },
+    "line3":
+    {
+      "UL": 1,
+      "IL": 1,
+      "PACT": 1,
+      "PAPP": 1,
+      "EACT": 1,
+      "EAPP": 1
+    },
+    "line4":
+    {
+      "UL": 1,
+      "IL": 1,
+      "PACT": 1,
+      "PAPP": 1,
+      "EACT": 1,
+      "EAPP": 1
+    },
+    "line5":
+    {
+      "UL": 1,
+      "IL": 1,
+      "PACT": 1,
+      "PAPP": 1,
+      "EACT": 1,
+      "EAPP": 1
+    },
+    "line6":
+    {
+      "UL": 1,
+      "IL": 1,
+      "PACT": 1,
+      "PAPP": 1,
+      "EACT": 1,
+      "EAPP": 1
+    }
+}
+}

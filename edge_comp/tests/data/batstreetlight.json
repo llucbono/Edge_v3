@@ -1,0 +1,30 @@
+{
+  "id": "ip+timestamp",
+  "ip": "ip",
+  "type": "BATSTREETLIGHT",
+  "date": "date",
+  "neighbors_list": "neighbors_list",
+  "confstate":
+    {
+      "NTOUT": "NTOUT",
+      "DTOUT": "DTOUT",
+      "THMIN": "THMIN",
+      "THMAX": "NTOUT",
+      "HYST": "DTOUT",
+      "SMASK": "THMIN",
+      "AMASK": " Ical",
+      "CH": "CH",
+      "CRT": " CRT"
+    },
+
+  "values" :
+    {
+    "STATE":0,
+    "TEMP": 0,
+    "OBS":0,
+    "DIM": 0,
+    "LUM": 0
+}
+}
+
+
