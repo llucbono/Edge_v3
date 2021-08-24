@@ -10,6 +10,7 @@ import edge_comp.views as ec_views
 
 router = routers.SimpleRouter()
 router.register(r'payloads', ec_views.PayloadViewSet,r'payloads')
+router.register(r'postview', ec_views.PostView,r'postview')
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -23,6 +24,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("ec/", include((router.urls, "ec"), namespace="ec")),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

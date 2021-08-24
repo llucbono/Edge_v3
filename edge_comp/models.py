@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 SENSORS = (
     (1, 'BATDIMMER'),
     (2, 'BATMETER'),
@@ -10,8 +11,6 @@ SENSORS = (
     (5, 'BATSENSE'),
     (6, 'BATSTREETLIGHT'),
 )
-
-
 
 class Payload(models.Model):
     payload_json = models.JSONField()
