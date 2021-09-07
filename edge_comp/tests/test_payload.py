@@ -21,7 +21,7 @@ class PayloadsTests(APITestCase):
 
     def test_expected_serialized_json(self):
 
-        expected_results = {"id":2,"payload_json":{
+        expected_results = {
                 "id": "ip+timestamp",
                 "ip": "ip",
                 "type": "BATPLUG",
@@ -38,17 +38,18 @@ class PayloadsTests(APITestCase):
                       "EACT": 1,
                     "EAPP": 1
                              }}
-                        }, "sensor":1,
-                        'created': str(datetime.datetime.now())
                     }
-
-        payload = Payload(**expected_results)
+        payload = Payload(payload_json=expected_results)
+        #payload = Payload(expected_results)
 
         print(payload)
 
         results = PayloadSerializer(payload).data
 
-        assert results == expected_results
+        print(payload.payload_json)
+        import json
+        self.assertJSONEqual(json.dumps(payload.payload_json), expected_results)
+        #assert payload.payload_json == expected_results
 
 
 
