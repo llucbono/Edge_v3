@@ -10,7 +10,7 @@ import edge_comp.views as ec_views
 
 router = routers.SimpleRouter()
 router.register(r'payloads', ec_views.PayloadViewSet,r'payloads')
-router.register(r'postview', ec_views.PostView,r'postview')
+#router.register(r'postview', ec_views.PostView,r'postview')
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
