@@ -31,7 +31,8 @@ def batmetertri_validation(p):
 
 def batplug_validation(p):
     if not p['ip']:
-        raise serializers.ValidationError('IP field is empty')
+        print("IP ERROR")
+        raise serializers.ValidationError('IP field is empty, ID is '+str(p['id']))
     elif not p['id']:
         raise serializers.ValidationError('ID field is empty')
     return
@@ -54,7 +55,7 @@ class PayloadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payload
         fields = ['id', 'payload_json', 'sensor', 'created']
-
+"""
     def validate_payload_json(self, value):
         if value['type']=='BATDIMMER':
             print("this is Batdimmer!")
@@ -74,5 +75,6 @@ class PayloadSerializer(serializers.ModelSerializer):
         elif value['type']=='BATSTREETLIGHT':
             print("this is Batstreetlight!")
             batstreetlight_validation(value)
-
         return value
+"""
+
