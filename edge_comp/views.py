@@ -9,62 +9,81 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import request
+from django.http import JsonResponse
 
 
 # Make it from generic point of view
 def sensor_validation(data):
     if data['payload_json']['type']=='BATDIMMER':
-        msg=batdimmer_validation(data)
+        msg, bol =batdimmer_validation(data)
     elif data['payload_json']['type']=='BATMETER':
-        msg=batmeter_validation(data)
+        msg, bol =batmeter_validation(data)
     elif data['payload_json']['type']=='BATMETERTRI':
-        msg=batmetertri_validation(data)
+        msg, bol =batmetertri_validation(data)
     elif data['payload_json']['type']=='BATPLUG':
-        msg=batplug_validation(data)
+        msg, bol =batplug_validation(data)
     elif data['payload_json']['type']=='BATSENSE':
-        msg=batsense_validation(data)
+        msg, bol =batsense_validation(data)
     elif data['payload_json']['type']=='BATSTREETLIGHT':
-        msg=batstreetlight_validation(data)
-    return msg
+        msg, bol=batstreetlight_validation(data)
+    return msg, bol
 
 def batdimmer_validation(data):
     if not data['payload_json']['dimming']:
         msg="Missing Dimming value in Batdimmer with IP:"+str(data['payload_json']['ip'])
+        bol=False
     elif int(data['payload_json']['dimming'])>100:
         msg="Dimming value out of range in Batdimmer with IP:"+str(data['payload_json']['ip'])
+        bol=False
     else:
         msg= "Batdimmer OK"
-    return msg
+        bol=True
+    return msg, bol
+
 def batmeter_validation(data):
     msg= "HELLO"
+    bol=True
     #if error 1 msg = 1000 code
-    return msg
+    return msg, bol
+
 def batmetertri_validation(data):
     msg= "HELLO"
+    bol=True
     #if error 1 msg = 1000 code
-    return msg
+    return msg, bol
+
 def batplug_validation(data):
-    msg= "HELLO"
     #if error 1 msg = 1000 code
-    return msg
+    msg="HELLO"
+    bol=True
+    return msg, bol
+
 def batsense_validation(data):
     if not 0 <= int (data['payload_json']['values']['BAT']) <=4800:
         msg= "BAT value out of range of Batsense with IP:"+str(data['payload_json']['ip'])
+        bol=False
     else:
         msg="Batsense OK"
+        bol=True
     #if error 1 msg = 1000 code
-    return msg
+    return msg, bol
+
 def batstreetlight_validation(data):
+
     if not 20 <= int (data['payload_json']['values']['TEMP']) <=60:
         msg= "TEMP value out of range of batstreetlight with IP:"+str(data['payload_json']['ip'])
+        bol=False
     #if error 1 msg = 1000 code
     elif not 0 <= int (data['payload_json']['values']['DIM']) <=100:
         msg= "DIM value out of range of batstreetlight with IP:"+str(data['payload_json']['ip'])
+        bol=False
     elif not 0 <= int (data['payload_json']['values']['LUM']) <=1023:
         msg= "LUM value out of range of batstreetlight with IP:"+str(data['payload_json']['ip'])
+        bol=False
     else:
         msg="Batstreetlight OK"
-    return msg
+        bol=True
+    return msg, bol
 
 class PayloadViewSet(viewsets.ModelViewSet):
     queryset = Payload.objects.all()
@@ -72,19 +91,22 @@ class PayloadViewSet(viewsets.ModelViewSet):
     permission_classes = []
 
 
+
 class PostView(APIView):
 
-    def get(self, request, id=None):
-
-        items = Payload.objects.all()
-        serializer = PayloadSerializer(items, many=True)
+    def get(self, request):
+        valid = request.query_params['valid']
+        queryset = Payload.objects.filter(valid=valid)
+        serializer = PayloadSerializer(queryset,many=True)
         return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def post(self, request):
         serializer = PayloadSerializer(data=request.data)
         if serializer.is_valid():
+            msg, bol = sensor_validation(serializer.validated_data)
+            serializer.validated_data['valid']=bol
             serializer.save()
-            msg = sensor_validation(serializer.data)
+
             return Response(msg,status=status.HTTP_200_OK)
                 #call function to check empty fields and ranges
             #return Response({ "alarm":"1000","data": serializer.data['payload_json']['dimming']}, status=status.HTTP_200_OK)

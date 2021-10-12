@@ -18,4 +18,5 @@ class Payload(models.Model):
     payload_json = models.JSONField()
     sensor = models.IntegerField(choices=SENSORS,null=True,blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    valid = models.BooleanField(null=False)
 

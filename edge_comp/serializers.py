@@ -2,8 +2,15 @@ from rest_framework import serializers
 from .models import Payload, SENSORS
 
 
-#LOGIC FUNCTIONS TO DEVELOP FOR MAINTENANCE TASKS
 
+class PayloadSerializer(serializers.ModelSerializer):
+    valid = serializers.BooleanField(default= True)
+    class Meta:
+        model = Payload
+        fields = ['id', 'payload_json', 'sensor', 'created','valid']
+
+#LOGIC FUNCTIONS TO DEVELOP FOR MAINTENANCE TASKS
+"""
 def batdimmer_validation(p):
     if int(p['dimming'])>100:
         raise serializers.ValidationError('Dimming Value out of range')
@@ -50,11 +57,7 @@ def batstreetlight_validation(p):
     elif not p['id']:
         raise serializers.ValidationError('ID field is empty')
     return
-
-class PayloadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Payload
-        fields = ['id', 'payload_json', 'sensor', 'created']
+"""
 """
     def validate_payload_json(self, value):
         if value['type']=='BATDIMMER':
