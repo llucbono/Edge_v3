@@ -109,7 +109,6 @@ class PostView(APIView):
 
             return Response(msg,status=status.HTTP_200_OK)
                 #call function to check empty fields and ranges
-            #return Response({ "alarm":"1000","data": serializer.data['payload_json']['dimming']}, status=status.HTTP_200_OK)
         else:
             #test how to read values from serializer data for ranges
             return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
