@@ -14,6 +14,9 @@ from django.http import JsonResponse
 
 # Make it from generic point of view
 def sensor_validation(data):
+    msg= "OK"
+    bol=True
+    """
     if data['payload_json']['type']=='BATDIMMER':
         msg, bol =batdimmer_validation(data)
     elif data['payload_json']['type']=='BATMETER':
@@ -26,6 +29,7 @@ def sensor_validation(data):
         msg, bol =batsense_validation(data)
     elif data['payload_json']['type']=='BATSTREETLIGHT':
         msg, bol=batstreetlight_validation(data)
+    """
     return msg, bol
 
 def batdimmer_validation(data):
