@@ -7,7 +7,7 @@ class PayloadSerializer(serializers.ModelSerializer):
     valid = serializers.BooleanField(default= True)
     class Meta:
         model = Payload
-        fields = ['ip','date', 'type', 'created','valid','values']
+        fields = ['id','ip','date', 'type', 'created','valid','values']
 
 
 

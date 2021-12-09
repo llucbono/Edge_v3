@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 import json
 # Create your views here.
 
@@ -10,6 +11,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import request
 from django.http import JsonResponse
+from rest_framework.viewsets import ViewSet
+from rest_framework.decorators import action
 
 
 # Make it from generic point of view
@@ -92,17 +95,113 @@ def batstreetlight_validation(data):
 class PayloadViewSet(viewsets.ModelViewSet):
     queryset = Payload.objects.all()
     serializer_class = PayloadSerializer
+
+    @action(detail=False, methods=['post'])
+
+    def multiple(self, request):
+        serializer = PayloadSerializer(data=request.data,many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
+                #call function to check empty fields and ranges
+        else:
+            #test how to read values from serializer data for ranges
+            return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'])
+
+    def valid_items(self, request):
+        if 'valid' not in request.query_params:
+            queryset = Payload.objects.all()
+            serializer = PayloadSerializer(queryset,many=True)
+        else:
+            valid = request.query_params['valid']
+            queryset = Payload.objects.filter(valid=valid)
+            serializer = PayloadSerializer(queryset,many=True)
+        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+
+    def sensor_type(self, request):
+        if 'type' not in request.query_params:
+            queryset = Payload.objects.all()
+            serializer = PayloadSerializer(queryset,many=True)
+        else:
+            type = request.query_params['type']
+            queryset = Payload.objects.filter(type=type)
+            serializer = PayloadSerializer(queryset,many=True)
+        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get','delete'])
+
+    def offload(self, request):
+
+        if request.method=='GET':
+            if 'date' not in request.query_params:
+                queryset = Payload.objects.all()
+                serializer = PayloadSerializer(queryset,many=True)
+            else:
+                date = request.query_params['date']
+                queryset = Payload.objects.filter(date=date)
+                serializer = PayloadSerializer(queryset,many=True)
+                if queryset.count()>0:
+                    return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method=='DELETE':
+            date = request.query_params['date']
+            queryset = Payload.objects.filter(date=date)
+            if queryset.count() > 0:
+                queryset.delete()
+                return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
+        return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    @action(detail=False, methods=['get'])
+
+    def sensor(self, request):
+        if 'ip' not in request.query_params:
+            queryset = Payload.objects.all()
+            serializer = PayloadSerializer(queryset,many=True)
+        else:
+            ip = request.query_params['ip']
+            queryset = Payload.objects.filter(ip=ip)
+            serializer = PayloadSerializer(queryset,many=True)
+        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+
     permission_classes = []
+
+"""
+    @action(detail=False, methods=['delete'])
+
+    def sensor(self, request):
+        if 'ip' not in request.query_params:
+            queryset = Payload.objects.all()
+            serializer = PayloadSerializer(queryset,many=True)
+        else:
+            ip = request.query_params['ip']
+            queryset = Payload.objects.filter(ip=ip)
+            serializer = PayloadSerializer(queryset,many=True)
+        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+
+"""
+
 
 
 
 class PostView(APIView):
 
     def get(self, request):
-        valid = request.query_params['valid']
-        queryset = Payload.objects.filter(valid=valid)
-        serializer = PayloadSerializer(queryset,many=True)
+        if 'valid' not in request.query_params:
+            queryset = Payload.objects.all()
+            serializer = PayloadSerializer(queryset,many=True)
+        else:
+            valid = request.query_params['valid']
+            queryset = Payload.objects.filter(valid=valid)
+            serializer = PayloadSerializer(queryset,many=True)
         return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+
 
     def post(self, request):
         serializer = PayloadSerializer(data=request.data)
@@ -130,5 +229,53 @@ class PostView(APIView):
         item = get_object_or_404(Payload, id=id)
         item.delete()
         return Response({"status": "success", "data": "Item Deleted"})
+
+    permission_classes = []
+
+
+class ServerView(APIView):
+
+    def get(self, request):
+        id = request.query_params.get('id', None)
+        if id is not None:
+            queryset = Payload.objects.filter(id=id)
+        else:
+            queryset = Payload.objects.all()
+        serializer = PayloadSerializer(queryset,many=True)
+        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+
+
+    def post(self, request):
+        serializer = PayloadSerializer(data=request.data,many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+                #call function to check empty fields and ranges
+        else:
+            #test how to read values from serializer data for ranges
+            return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, id=None):
+        item = Payload.objects.get(id=id)
+        serializer = PayloadSerializer(item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id=None):
+        item = get_object_or_404(Payload, id=id)
+        item.delete()
+        return Response({"status": "success", "data": "Item Deleted"})
+
+    def delete(self, request):
+        if 'date' in request.query_params:
+            date = request.query_params['date']
+            payloads = Payload.objects.filter(date=date)
+            if payloads.count() > 0:
+                payloads.delete()
+                return Response("Femails deleted", status=status.HTTP_204_NO_CONTENT)
+        return Response("Unable to find the femails.", status=status.HTTP_400_BAD_REQUEST)
 
     permission_classes = []
