@@ -1,9 +1,6 @@
 import argparse
 from ast import arg
 from cProfile import label
-import requests
-from requests.structures import CaseInsensitiveDict
-import json
 import time
 from tqdm import tqdm
 
