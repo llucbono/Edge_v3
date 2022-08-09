@@ -1,0 +1,88 @@
+[
+    {
+    "ip": "132.13.49.34",
+    "date": 1637678232454,
+    "type": "Oupsi",
+    "values": [
+        {
+        "id": "0",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-PAPP",
+        "value": 666
+        },
+        {
+        "id": "1",
+        "date": 13021999,
+        "parameterId": "b216::1a10:4e00:501:14-EAPP",
+        "value": 417
+        },
+        {
+        "id": "2",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-PACT",
+        "value": 69
+        },
+        {
+        "id": "3",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-IL",
+        "value": 0
+        },
+        {
+        "id": "4",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-UL",
+        "value": 229
+        },
+        {
+        "id": "5",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-EACT",
+        "value": 141
+        }
+    ]
+},
+{
+    "ip": "b216::1a10:4e00:501:15",
+    "date": 1637678232454,
+    "type": "Coffee",
+    "values": [
+        {
+        "id": "0",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-PAPP",
+        "value": 666
+        },
+        {
+        "id": "1",
+        "date": 13021999,
+        "parameterId": "b216::1a10:4e00:501:14-EAPP",
+        "value": 417
+        },
+        {
+        "id": "2",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-PACT",
+        "value": 69
+        },
+        {
+        "id": "3",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-IL",
+        "value": 0
+        },
+        {
+        "id": "4",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-UL",
+        "value": 229
+        },
+        {
+        "id": "5",
+        "date": 1637678232454,
+        "parameterId": "b216::1a10:4e00:501:14-EACT",
+        "value": 141
+        }
+    ]
+    }
+]
