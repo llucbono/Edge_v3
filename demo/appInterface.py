@@ -1,7 +1,6 @@
 import requests
 from requests.structures import CaseInsensitiveDict
 from utility import Utility
-import socket
 
 class ApplicationInterface:        
     def __init__(self, url):
@@ -95,8 +94,6 @@ class ApplicationInterface:
             print("[Error] - ", type(inst))
             return None
     
-    def postInit(self):
-        ip = socket.gethostbyname(socket.gethostname())
-        print(ip)
+    def postInit(self, ip):
         dict = {'values': [{'id': "0", 'date': 0, 'parameterId': "0", 'value': ip}]}
         self.postDataFromSingleDeviceDict(ip, 0, "app", dict)

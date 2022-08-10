@@ -3,14 +3,12 @@ from appInterface import ApplicationInterface
 
 # For prediction task
 import pandas as pd
-import matplotlib.pyplot as plt
 import datetime as dt
 from darts import TimeSeries
 from darts.models import ExponentialSmoothing
 
 # For the application to be called by the API or others nodes
-from flask import Flask, jsonify
-from flask_restful import Resource, Api
+from flask import Flask
 from multiprocessing import Process
 """
 ========================================================
@@ -25,36 +23,38 @@ data) and send the results back to a node.
 
 Command:
 --------
+docker image build -t project .\demo\
+
 requests.get('http://127.0.0.1:5000/query-example').text
- requests.get('http://127.0.0.1:5000/run-app')
+requests.get('http://127.0.0.1:5000/run-app').content
 
 https://github.com/jbaudru & https://github.com/llucbono 
 ========================================================
 """
+# TO CONNECT TO API to get or post DATA
+URL = "http://localhost:8000/ec/payloads"
+LOCAL_IP = "127.0.0.1"
+interface = ApplicationInterface(URL)
 
 # TO LISTEN FROM CALL FROM API
 app = Flask(__name__)
-# TO CONNECT TO API to get or post DATA
-URL = "http://localhost:8000/ec/payloads"
-interface = ApplicationInterface(URL)
 
 def startCommunication(app):
-    #server = Process(target=app.run(host="0.0.0.0", debug= True, port=5000))
-    server = Process(target=app.run(debug= True, port=5000))
+    server = Process(target=app.run(host=LOCAL_IP, debug= True, port=5000))
     server.start()    
 
 def stopCommunication(server):
     server.terminate()
     server.join()    
 
-@app.route('/query-example')
+@app.route('/hi')
 def query_example():
-    return 'Query String Example'
+    return 'Hello there'
 
 @app.route('/run-app')
 def run_app():
     try:
-        # YOUR CODE HERE BELOW
+        # YOUR CODE HERE
         print("[+] Getting data")
         res = interface.getListOfMessageFromSensorType("deg")
         data = res['data']
@@ -64,10 +64,11 @@ def run_app():
     return res
 
 def main():
-    interface.postInit()
+    interface.postInit(LOCAL_IP) # SEND THE IP OF THE APP TO THE API
     startCommunication(app)
 
-
+# Just a random function to demonstrate the principle
+# YOUR CODE HERE
 def makePrediction(data):
     print("[+] Making predictions")
     temp = []; date = []; df = pd.DataFrame()
