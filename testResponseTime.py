@@ -1,15 +1,13 @@
 import argparse
-from ast import arg
-from cProfile import label
 import time
 from tqdm import tqdm
-
 
 from utility import Utility
 from appInterface import ApplicationInterface # To access to the API
 
 URL = "http://localhost:8000/ec/payloads"
 NB_REQUEST = 100
+
 uti = Utility()
 interface = ApplicationInterface(URL)
 

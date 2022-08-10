@@ -1,8 +1,9 @@
 import requests
 from requests.structures import CaseInsensitiveDict
 from utility import Utility
+import socket
 
-class ApplicationInterface:
+class ApplicationInterface:        
     def __init__(self, url):
         self.uti = Utility()
         self.URL = url
@@ -43,6 +44,16 @@ class ApplicationInterface:
         DATA = {'ip':ip, 'date':date, 'type':type, 'values':val["values"]}
         json_object = self.uti.dumpData(DATA)
         return self.post(url, json_object)
+
+    def postDataFromSingleDeviceDict(self, ip: str, date: int, type: str, dict: dict):
+        url = self.URL + "/"
+        try:
+            DATA = {'ip':ip, 'date':date, 'type':type, 'values':dict["values"]}
+            json_object = self.uti.dumpData(DATA)
+            return self.post(url, json_object)
+        except:
+            print("[Error] - Dict must have the following form: {'values': [{'id': str, 'date': int, 'parameterId': str, 'value': any}]}")
+            return None
     
     def postDataFromMultipleDevice(self, jsonfile):
         url = self.URL + "/multiple/"
@@ -52,22 +63,40 @@ class ApplicationInterface:
     
     
     def post(self, url, json_object):
-        resp = requests.post(url=url, headers=self.headers, data=json_object)
-        if(resp.status_code in [204,200,201]):
-            return resp.content
-        else:
+        try:
+            resp = requests.post(url=url, headers=self.headers, data=json_object)
+            if(resp.status_code in [204,200,201]):
+                return resp.json()
+            else:
+                return None
+        except Exception as inst:
+            print("[Error] - ", type(inst))
             return None
         
     def delete(self, url):
-        resp = requests.delete(url=url, headers=self.headers)
-        if(resp.status_code in [204,200,201]):
-            return resp.content
-        else:
+        try:
+            resp = requests.delete(url=url, headers=self.headers)
+            if(resp.status_code in [204,200,201]):
+                return resp.json()
+            else:
+                return None
+        except Exception as inst:
+            print("[Error] - ", type(inst))
             return None
         
     def get(self, url):
-        resp = requests.get(url=url, headers=self.headers)
-        if(resp.status_code in [204,200,201]):
-            return resp.content
-        else:
+        try:
+            resp = requests.get(url=url, headers=self.headers)
+            if(resp.status_code in [204,200,201]):
+                return resp.json()
+            else:
+                return None
+        except Exception as inst:
+            print("[Error] - ", type(inst))
             return None
+    
+    def postInit(self):
+        ip = socket.gethostbyname(socket.gethostname())
+        print(ip)
+        dict = {'values': [{'id': "0", 'date': 0, 'parameterId': "0", 'value': ip}]}
+        self.postDataFromSingleDeviceDict(ip, 0, "app", dict)
