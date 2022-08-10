@@ -24,6 +24,7 @@ data) and send the results back to a node.
 Command:
 --------
 docker image build -t project .\demo\
+docker run project
 
 requests.get('http://127.0.0.1:5000/query-example').text
 requests.get('http://127.0.0.1:5000/run-app').content
