@@ -12,29 +12,29 @@ from appInterface import ApplicationInterface
 
 """
 ========================================================
-Note: 
+Note:
 ------
 The purpose of this application is to show how
 to use the python interface to interact with the API.
 
-The goal of this application is to generate data 
-according to a certain distribution and to send 
+The goal of this application is to generate data
+according to a certain distribution and to send
 them at regular intervals to a network node.
 
 Command:
 --------
 python .\demoAppDataGenerator.py --min 1 --n 5
 
-https://github.com/jbaudru & https://github.com/llucbono 
+https://github.com/jbaudru & https://github.com/llucbono
 ========================================================
 """
 
-URL = "http://localhost:8000/ec/payloads"
+URL = "http://192.168.0.219:8000/ec/payloads"
 interface = ApplicationInterface(URL)
 
-def main(args):    
+def main(args):
     interface.deleteListOfMessageByDate(1660119805)
-    
+
     sendData(args.n)
     schedule.every(args.min).minutes.do(sendData, args.n)
     while True:
@@ -48,10 +48,10 @@ def sendData(nbdata):
     pbar = tqdm(total=len(data))
     for i in range(0,len(data)):
         dict = {'values': [{'id': str(i), 'date': dates[i], 'parameterId': str(i), 'value': data[i]}]}
-        interface.postDataFromSingleDeviceDict("192.168.56.1", dates[i], "deg", dict)
+        interface.postDataFromSingleDeviceDict("192.168.56.1", dates[i], "testLocalNet", dict)
         pbar.update(1)
     pbar.close()
-    
+
 def getRandomDate(lenght):
     dates = []
     tmpdates = pd.date_range('2000-01-01', '2022-01-01', freq='D')
