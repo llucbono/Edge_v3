@@ -3,6 +3,7 @@ from appInterface import ApplicationInterface
 
 # For prediction task
 import pandas as pd
+import random
 import datetime as dt
 from darts import TimeSeries
 from darts.models import ExponentialSmoothing
@@ -23,25 +24,28 @@ data) and send the results back to a node.
 
 Command:
 --------
-docker image build -t project .\demo\
-docker run project
+cd demo
+docker build -t app_demo_prediction .
+docker run -p 5000:5000 -d app_demo_prediction
 
-requests.get('http://127.0.0.1:5000/query-example').text
-requests.get('http://127.0.0.1:5000/run-app').content
+requests.get('http://192.168.0.219:5000/hi').text
+requests.get('http://192.168.0.219:5000/run-app').content
 
 https://github.com/jbaudru & https://github.com/llucbono 
 ========================================================
 """
 # TO CONNECT TO API to get or post DATA
-URL = "http://localhost:8000/ec/payloads"
-LOCAL_IP = "127.0.0.1"
+#URL = "http://172.19.0.1:8000/ec/payloads" LOCAL DOCKER IP
+URL = "http://192.168.0.219:8000/ec/payloads"
+#LOCAL_IP = "0.0.0.0"#"192.168.0.219"
 interface = ApplicationInterface(URL)
 
 # TO LISTEN FROM CALL FROM API
 app = Flask(__name__)
 
 def startCommunication(app):
-    server = Process(target=app.run(host=LOCAL_IP, debug= True, port=5000))
+    #server = Process(target=app.run(host=LOCAL_IP, debug= True, port=5000))
+    server = Process(target=app.run(debug= True, port=5000))
     server.start()    
 
 def stopCommunication(server):
@@ -52,6 +56,15 @@ def stopCommunication(server):
 def query_example():
     return 'Hello there'
 
+@app.route('/send-ip')
+def send_ip():
+    try:
+        res = interface.postInit(LOCAL_IP)
+        print(res)
+        return LOCAL_IP
+    except:
+        return 'Error'
+        
 @app.route('/run-app')
 def run_app():
     try:
@@ -92,8 +105,8 @@ def makePrediction(data):
     print("[+] Fitting model for timeseries prediction")
     model.fit(train)
     prediction = model.predict(len(val), num_samples=len(times))
-        
-    return prediction.values()[-1][0]
+    ind = random.randint(0,len(prediction.values()-1))
+    return prediction.values()[ind][0]
     #series.plot(color="blue")
     #prediction.plot(label='forecast', color="purple", low_quantile=0.05, high_quantile=0.95)
     #plt.legend()

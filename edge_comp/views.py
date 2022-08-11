@@ -14,6 +14,9 @@ from django.http import JsonResponse
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Make it from generic point of view
 def sensor_validation(data):
@@ -130,12 +133,20 @@ class PayloadViewSet(viewsets.ModelViewSet):
             type = request.query_params['type']
             queryset = Payload.objects.filter(type=type)
             serializer = PayloadSerializer(queryset,many=True)
+            print('type',type)
+            s = requests.Session()
+            retry = Retry(connect=3, backoff_factor=0.5)
+            adapter = HTTPAdapter(max_retries=retry)
+            s.mount('http://', adapter)
+            #resp = s.get(url="http://127.0.0.1:5000/hi")
+            resp = s.get(url="http://192.168.0.219:5000/hi")
+            print(resp.text)
+            
         return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get','delete'])
 
     def offload(self, request):
-
         if request.method=='GET':
             if 'date' not in request.query_params:
                 queryset = Payload.objects.all()
@@ -204,6 +215,11 @@ class PostView(APIView):
 
 
     def post(self, request):
+        # TEST TO SEND MESSAGE TO APP AT EVERY POST FROM SENSOR
+        #resp = requests.get(url="http://192.168.0.219:5000/run-app")
+        resp = requests.get(url="http://http://127.0.0.1/:5000/run-app")
+        print(resp.text)
+        
         serializer = PayloadSerializer(data=request.data)
         if serializer.is_valid():
             msg, bol = sensor_validation(serializer.validated_data)
@@ -246,6 +262,7 @@ class ServerView(APIView):
 
 
     def post(self, request):
+        print("DEBUG")
         serializer = PayloadSerializer(data=request.data,many=True)
         if serializer.is_valid():
             serializer.save()

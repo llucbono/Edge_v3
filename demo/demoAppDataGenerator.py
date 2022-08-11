@@ -33,8 +33,6 @@ URL = "http://localhost:8000/ec/payloads"
 interface = ApplicationInterface(URL)
 
 def main(args):    
-    interface.deleteListOfMessageByDate(1660119805)
-    
     sendData(args.n)
     schedule.every(args.min).minutes.do(sendData, args.n)
     while True:
