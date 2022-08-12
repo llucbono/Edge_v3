@@ -65,6 +65,14 @@ class ApplicationInterface:
             print("[Error] - Dict must have the following form: {'values': [{'id': str, 'date': int, 'parameterId': str, 'value': any}]}")
             return url
     
+    def deleteAppIPbyName(self, name):
+        url = self.URL + "/appIP/?type=" + name
+        return self.delete(url)
+    
+    def getAppIPbyName(self, name):
+        url = self.URL + "/appIP/?type=" + name
+        return self.get(url)
+    
     def postDataFromMultipleDevice(self, jsonfile):
         url = self.URL + "/multiple/"
         DATA = self.uti.getLocalData(jsonfile)

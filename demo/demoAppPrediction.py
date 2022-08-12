@@ -1,4 +1,5 @@
 # Abstraction for send and get data from application
+from code import interact
 from appInterface import ApplicationInterface
 
 # For prediction task
@@ -12,6 +13,7 @@ from darts.models import ExponentialSmoothing
 from flask import Flask
 from multiprocessing import Process
 import socket
+import atexit
 """
 ========================================================
 Note:
@@ -28,6 +30,7 @@ Command:
 cd demo
 docker build -t app_demo_prediction .
 docker run -p 5000:5000 -d app_demo_prediction
+docker run -p 5000:5000 --network host -d app_demo_prediction
 
 requests.get('http://192.168.0.219:5000/hi').text
 requests.get('http://192.168.0.219:5000/run-app').content
@@ -36,10 +39,8 @@ https://github.com/jbaudru & https://github.com/llucbono
 ========================================================
 """
 # TO CONNECT TO API to get or post DATA
-
-#URL = "http://172.19.0.1:8000/ec/payloads" LOCAL DOCKER IP
 URL = "http://192.168.0.219:8000/ec/payloads"
-LOCAL_IP = socket.gethostbyname(socket.gethostname())#"192.168.0.219"
+LOCAL_IP = "192.168.0.219" #socket.gethostbyname(socket.gethostname())#"192.168.0.219" #IP OF THNE APP
 APPNAME="demoAppPrediction"
 interface = ApplicationInterface(URL)
 
@@ -82,9 +83,17 @@ def run_app():
 def main():
     try:
         interface.postIP(LOCAL_IP,'12','appIP',APPNAME)# SEND THE IP OF THE APP TO THE API
+        print('[+] IP send to the API', LOCAL_IP)
     except:
         print('DEBUG: Error sending IP')
     startCommunication(app)
+
+
+def exit_handler():
+    stopCommunication(app)
+    interface.deleteAppIPbyName(APPNAME)
+    print('[+] IP remove from API')
+
 
 # Just a random function to demonstrate the principle
 # YOUR CODE HERE

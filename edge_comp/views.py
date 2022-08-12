@@ -14,10 +14,6 @@ from django.http import JsonResponse
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 
-import requests
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-
 # Make it from generic point of view
 def sensor_validation(data):
     msg= "OK"
@@ -161,20 +157,23 @@ class PayloadViewSet(viewsets.ModelViewSet):
         return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-    @action(detail=False, methods=['post','get'])
+    @action(detail=False, methods=['post','get','delete'])
     def appIP(self, request):
         # TO GET THE IP OF AN APOP GIVEN ITS NAME
         if request.method=='GET':
-            if 'name' not in request.query_params:
-                queryset = Payload.objects.all()
-                serializer = PayloadSerializer(queryset,many=True)
+            if 'type' not in request.query_params:
+                return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                name = request.query_params['name']
-                queryset = Payload.objects.filter(type=type)
-                print('DEBUG GET', name) # The asked name from other application
+                name = request.query_params['type']
+                print('ASK FOR IP OF:',name)
+                queryset = Payload.objects.filter(type='appIP')
                 serializer = PayloadSerializer(queryset,many=True)
-                
-            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+                for elem in serializer.data:
+                    if(elem['values'][0]['value']==name):
+                        return Response({"status": "success", "data": elem['ip']}, status=status.HTTP_200_OK)
+                return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        
         # FOR THE APP TO POST THEIR IP ON START
         elif request.method=='POST':
             serializer = PayloadSerializer(data=request.data)
@@ -185,26 +184,21 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 print('APP NAME RECEIVED:', _appName)
                 print('APP IP RECEIVED:', _appIP)
                 
-                # CALL THE APP
-                s = requests.Session()
-                retry = Retry(connect=3, backoff_factor=0.5)
-                adapter = HTTPAdapter(max_retries=retry)
-                s.mount('http://', adapter)
-                _appURL = "http://" + _appIP + ":5000/hi/"
-                _appURL = "http://" + '192.168.0.219' + ":5000/run-app"
-                resp = s.get(url=_appURL)
-                print('MESSAGE FROM APP:',resp.text)
-                
                 return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
                     #call function to check empty fields and ranges
                     
-            # TODO : DELETE WHEN APP CLOSE
-            elif request.method=='DELETE':
-                pass
-            
-            else:
-                #test how to read values from serializer data for ranges
-                return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        # FOR THE APP TO REMOVE THEY IP FROM THE DATABASE
+        elif request.method=='DELETE':
+            name = request.query_params['type']
+            print('DELETING APP:',name)
+            queryset = Payload.objects.filter(type='appIP')
+            if queryset.count() > 0:
+                queryset.delete()
+                return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
+        
+        else:
+            #test how to read values from serializer data for ranges
+            return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'])
 
