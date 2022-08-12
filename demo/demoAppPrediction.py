@@ -11,6 +11,7 @@ from darts.models import ExponentialSmoothing
 # For the application to be called by the API or others nodes
 from flask import Flask
 from multiprocessing import Process
+import socket
 """
 ========================================================
 Note:
@@ -38,7 +39,7 @@ https://github.com/jbaudru & https://github.com/llucbono
 
 #URL = "http://172.19.0.1:8000/ec/payloads" LOCAL DOCKER IP
 URL = "http://192.168.0.219:8000/ec/payloads"
-#LOCAL_IP = "0.0.0.0"#"192.168.0.219"
+LOCAL_IP = socket.gethostbyname(socket.gethostname())#"192.168.0.219"
 interface = ApplicationInterface(URL)
 
 # TO LISTEN FROM CALL FROM API
@@ -60,11 +61,10 @@ def query_example():
 @app.route('/send-ip')
 def send_ip():
     try:
-        res = interface.postInit(LOCAL_IP)
-        print(res)
+        interface.postIP(LOCAL_IP,'12','appIP') # SEND THE IP OF THE APP TO THE API
         return LOCAL_IP
     except:
-        return 'Error'
+        return 'DEBUG: Error sending IP'
         
 @app.route('/run-app')
 def run_app():
@@ -79,7 +79,10 @@ def run_app():
     return res
 
 def main():
-    interface.postInit(LOCAL_IP) # SEND THE IP OF THE APP TO THE API
+    try:
+        interface.postIP(LOCAL_IP,'12','appIP') # SEND THE IP OF THE APP TO THE API
+    except:
+        print('DEBUG: Error sending IP')
     startCommunication(app)
 
 # Just a random function to demonstrate the principle

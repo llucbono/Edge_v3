@@ -24,6 +24,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("postview/", ec_views.PostView.as_view()),
+    
     path("serverview/", ec_views.ServerView.as_view()),
     path("serverview/<int:date>", ec_views.ServerView.as_view()),
     path("postview/<int:id>", ec_views.PostView.as_view()),

@@ -134,16 +134,6 @@ class PayloadViewSet(viewsets.ModelViewSet):
             queryset = Payload.objects.filter(type=type)
             serializer = PayloadSerializer(queryset,many=True)
             
-            # Code to send request to the app
-            print('type',type)
-            s = requests.Session()
-            retry = Retry(connect=3, backoff_factor=0.5)
-            adapter = HTTPAdapter(max_retries=retry)
-            s.mount('http://', adapter)
-            #resp = s.get(url="http://127.0.0.1:5000/hi")
-            resp = s.get(url="http://192.168.0.219:5000/hi")
-            print(resp.text)
-            
         return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get','delete'])
@@ -170,6 +160,31 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
         return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+    @action(detail=False, methods=['post'])
+    def appIP(self, request):
+        serializer = PayloadSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            _appIP = serializer.data['ip']
+            print('APP IP RECEIVED:', _appIP)
+            
+            # CALL THE APP
+            s = requests.Session()
+            retry = Retry(connect=3, backoff_factor=0.5)
+            adapter = HTTPAdapter(max_retries=retry)
+            s.mount('http://', adapter)
+            _appURL = "http://" + _appIP + ":5000/hi/"
+            _appURL = "http://" + '192.168.0.219' + ":5000/run-app"
+            resp = s.get(url=_appURL)
+            print('MESSAGE FROM APP:',resp.text)
+            
+            return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
+                #call function to check empty fields and ranges
+        else:
+            #test how to read values from serializer data for ranges
+            return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'])
 
@@ -217,11 +232,6 @@ class PostView(APIView):
 
 
     def post(self, request):
-        # TEST TO SEND MESSAGE TO APP AT EVERY POST FROM SENSOR
-        #resp = requests.get(url="http://192.168.0.219:5000/run-app")
-        resp = requests.get(url="http://http://127.0.0.1/:5000/run-app")
-        print(resp.text)
-        
         serializer = PayloadSerializer(data=request.data)
         if serializer.is_valid():
             msg, bol = sensor_validation(serializer.validated_data)
@@ -264,7 +274,6 @@ class ServerView(APIView):
 
 
     def post(self, request):
-        print("DEBUG")
         serializer = PayloadSerializer(data=request.data,many=True)
         if serializer.is_valid():
             serializer.save()
@@ -298,3 +307,25 @@ class ServerView(APIView):
         return Response("Unable to find the femails.", status=status.HTTP_400_BAD_REQUEST)
 
     permission_classes = []
+
+
+class AppView(APIView):
+    def post(self, request):
+        serializer = PayloadSerializer(data=request.data,many=True)
+        if serializer.is_valid():
+            serializer.save()
+            
+            print('DEBUG', serializer.data)
+            s = requests.Session()
+            retry = Retry(connect=3, backoff_factor=0.5)
+            adapter = HTTPAdapter(max_retries=retry)
+            s.mount('http://', adapter)
+            #resp = s.get(url="http://127.0.0.1:5000/hi") # local test
+            resp = s.get(url="http://192.168.0.219:5000/hi")
+            print(resp.text)
+            
+            return Response(status=status.HTTP_200_OK)
+                #call function to check empty fields and ranges
+        else:
+            #test how to read values from serializer data for ranges
+            return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
