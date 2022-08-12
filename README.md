@@ -15,7 +15,6 @@ execution via Docker Compose.
 So once you have made sure that Docker is installed on the machine where it is to
 be run, simply run the following command in the terminal:
 ```
-cd api_ec
 docker-compose -f local.yml up
 ```
 ## Scheme

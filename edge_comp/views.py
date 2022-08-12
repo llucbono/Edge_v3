@@ -133,6 +133,8 @@ class PayloadViewSet(viewsets.ModelViewSet):
             type = request.query_params['type']
             queryset = Payload.objects.filter(type=type)
             serializer = PayloadSerializer(queryset,many=True)
+            
+            # Code to send request to the app
             print('type',type)
             s = requests.Session()
             retry = Retry(connect=3, backoff_factor=0.5)

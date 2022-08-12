@@ -108,11 +108,10 @@ def makePrediction(data):
     prediction = model.predict(len(val), num_samples=len(times))
 
     ind = random.randint(0,len(prediction.values()-1))
-    return prediction.values()[ind][0]
-    #series.plot(color="blue")
-    #prediction.plot(label='forecast', color="purple", low_quantile=0.05, high_quantile=0.95)
-    #plt.legend()
-    #plt.show()
+    try:
+        return prediction.values()[ind][0]
+    except:
+        return 666
 
 if __name__ == '__main__':
     main()
