@@ -54,9 +54,9 @@ class ApplicationInterface:
             print("[Error] - Dict must have the following form: {'values': [{'id': str, 'date': int, 'parameterId': str, 'value': any}]}")
             return None
         
-    def postIP(self, ip: str, date: int, type: str):
+    def postIP(self, ip: str, date: int, type: str, appname: str):
         url = self.URL + "/appIP/"
-        dict = {'values': [{'id': "0", 'date': 0, 'parameterId': "0", 'value': ip}]}
+        dict = {'values': [{'id': "0", 'date': 0, 'parameterId': "0", 'value': appname}]}
         try:
             DATA = {'ip':ip, 'date':date, 'type':type, 'values':dict["values"]}
             json_object = self.uti.dumpData(DATA)

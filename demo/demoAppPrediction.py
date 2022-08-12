@@ -40,6 +40,7 @@ https://github.com/jbaudru & https://github.com/llucbono
 #URL = "http://172.19.0.1:8000/ec/payloads" LOCAL DOCKER IP
 URL = "http://192.168.0.219:8000/ec/payloads"
 LOCAL_IP = socket.gethostbyname(socket.gethostname())#"192.168.0.219"
+APPNAME="demoAppPrediction"
 interface = ApplicationInterface(URL)
 
 # TO LISTEN FROM CALL FROM API
@@ -61,7 +62,7 @@ def query_example():
 @app.route('/send-ip')
 def send_ip():
     try:
-        interface.postIP(LOCAL_IP,'12','appIP') # SEND THE IP OF THE APP TO THE API
+        interface.postIP(LOCAL_IP,'12','appIP',APPNAME) # SEND THE IP OF THE APP TO THE API
         return LOCAL_IP
     except:
         return 'DEBUG: Error sending IP'
@@ -80,7 +81,7 @@ def run_app():
 
 def main():
     try:
-        interface.postIP(LOCAL_IP,'12','appIP') # SEND THE IP OF THE APP TO THE API
+        interface.postIP(LOCAL_IP,'12','appIP',APPNAME)# SEND THE IP OF THE APP TO THE API
     except:
         print('DEBUG: Error sending IP')
     startCommunication(app)
