@@ -163,6 +163,7 @@ class PayloadViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post','get'])
     def appIP(self, request):
+        # TO GET THE IP OF AN APOP GIVEN ITS NAME
         if request.method=='GET':
             if 'name' not in request.query_params:
                 queryset = Payload.objects.all()
@@ -174,7 +175,7 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 serializer = PayloadSerializer(queryset,many=True)
                 
             return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
-
+        # FOR THE APP TO POST THEIR IP ON START
         elif request.method=='POST':
             serializer = PayloadSerializer(data=request.data)
             if serializer.is_valid():
@@ -196,6 +197,11 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 
                 return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
                     #call function to check empty fields and ranges
+                    
+            # TODO : DELETE WHEN APP CLOSE
+            elif request.method=='DELETE':
+                pass
+            
             else:
                 #test how to read values from serializer data for ranges
                 return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
