@@ -54,13 +54,9 @@ class ApplicationInterface:
             print("[Error] - Dict must have the following form: {'values': [{'id': str, 'date': int, 'parameterId': str, 'value': any}]}")
             return None
         
-    def postIP(self, ip: str, date: int, type: str):
-        #url = "http://192.168.0.219:8000/ec/" + "appIP/"
+    def postIP(self, ip: str, date: int, type: str, appname: str):
         url = self.URL + "/appIP/"
-        print("DEBUG", url)
-        print("TEST")
-        
-        dict = {'values': [{'id': "0", 'date': 0, 'parameterId': "0", 'value': ip}]}
+        dict = {'values': [{'id': "0", 'date': 0, 'parameterId': "0", 'value': appname}]}
         try:
             DATA = {'ip':ip, 'date':date, 'type':type, 'values':dict["values"]}
             json_object = self.uti.dumpData(DATA)
@@ -68,6 +64,14 @@ class ApplicationInterface:
         except:
             print("[Error] - Dict must have the following form: {'values': [{'id': str, 'date': int, 'parameterId': str, 'value': any}]}")
             return url
+    
+    def deleteAppIPbyName(self, name):
+        url = self.URL + "/appIP/?type=" + name
+        return self.delete(url)
+    
+    def getAppIPbyName(self, name):
+        url = self.URL + "/appIP/?type=" + name
+        return self.get(url)
     
     def postDataFromMultipleDevice(self, jsonfile):
         url = self.URL + "/multiple/"
