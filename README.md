@@ -17,11 +17,20 @@ be run, simply run the following command in the terminal:
 ```
 docker-compose -f local.yml up
 ```
+To call the API via any **Python** program you should use the following interface: https://github.com/jbaudru/RESTful-app-and-interface/blob/main/appInterface.py
+
+The documentation of the interface is available here: https://github.com/jbaudru/RESTful-app-and-interface/blob/main/Interface%20Documentation.pdf  
+
 ## Scheme
 The scheme of this API only contains one generic model. This model aims to
 represent any instance of data for an individual sensor. Therefore, the specific values
 that are case-dependent (parameters of the specific sensor) are contained in the
 field Values.
+
+## Tutorial 
+You can find a use case of the API with an example of application via this link : https://github.com/jbaudru/RESTful-app-and-interface
+
+In this example, it is about an application sending random data to the API and another one making predictions on the data received by the API.
 
 ## Methods
 Several methods are initially proposed and try to capture the main uses of these applications
