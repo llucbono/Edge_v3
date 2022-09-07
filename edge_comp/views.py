@@ -156,6 +156,17 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
         return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=['delete'])
+    def all(self, request):
+        print("Delete all")
+        if request.method=='DELETE':
+            queryset = Payload.objects.all()
+            if queryset.count() > 0:
+                queryset.delete()
+                return Response({"status": "success", "data": "All item deleted"},status=status.HTTP_200_OK)
+        return Response({"status": "fail", "data": "No item at all"}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
     @action(detail=False, methods=['post','get','delete'])
     def appIP(self, request):
