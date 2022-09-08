@@ -156,6 +156,7 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
         return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
 
+
     @action(detail=False, methods=['delete'])
     def all(self, request):
         print("Delete all")
@@ -166,6 +167,45 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 return Response({"status": "success", "data": "All item deleted"},status=status.HTTP_200_OK)
         return Response({"status": "fail", "data": "No item at all"}, status=status.HTTP_400_BAD_REQUEST)
 
+
+    @action(detail=False, methods=['post','get','delete'])
+    def appUse(self, request):
+        if request.method=='GET':
+            if 'type' not in request.query_params:
+                return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                name = request.query_params['type']
+                print('ASK FOR USE OF:',name)
+                queryset = Payload.objects.filter(type='appUse')
+                serializer = PayloadSerializer(queryset,many=True)
+                for elem in serializer.data:
+                    if(elem['values'][0]['value']["APPNAME"]==name):
+                        cpu = elem['values'][0]['value']["CPU"]
+                        ram = elem['values'][0]['value']["RAM"]
+                        return Response({"status": "success", "data": (cpu, ram)}, status=status.HTTP_200_OK)
+                return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method=='POST':
+            serializer = PayloadSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                _appIP = serializer.data['ip']
+                _appName = serializer.data['values'][0]['value']
+                print('APP DATA:', _appName)
+                print('APP IP RECEIVED:', _appIP)
+                
+                return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
+
+        elif request.method=='DELETE':
+            name = request.query_params['type']
+            print('DELETING APP:',name)
+            queryset = Payload.objects.filter(type='appUse')
+            if queryset.count() > 0:
+                queryset.delete()
+                return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
+        
+        else:
+            return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
     @action(detail=False, methods=['post','get','delete'])
@@ -183,7 +223,6 @@ class PayloadViewSet(viewsets.ModelViewSet):
                     if(elem['values'][0]['value']==name):
                         return Response({"status": "success", "data": elem['ip']}, status=status.HTTP_200_OK)
                 return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
-
         
         # FOR THE APP TO POST THEIR IP ON START
         elif request.method=='POST':
@@ -192,7 +231,7 @@ class PayloadViewSet(viewsets.ModelViewSet):
                 serializer.save()
                 _appIP = serializer.data['ip']
                 _appName = serializer.data['values'][0]['value']
-                print('APP NAME RECEIVED:', _appName)
+                print('APP DATA:', _appName)
                 print('APP IP RECEIVED:', _appIP)
                 
                 return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
@@ -211,8 +250,54 @@ class PayloadViewSet(viewsets.ModelViewSet):
             #test how to read values from serializer data for ranges
             return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['post','get','delete'])
+    def appModel(self, request):
+        # TO GET THE IP OF AN APOP GIVEN ITS NAME
+        if request.method=='GET':
+            if 'type' not in request.query_params:
+                return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                name = request.query_params['type']
+                print('ASK FOR MODEL OF:',name)
+                queryset = Payload.objects.filter(type='model_struct')
+                serializer = PayloadSerializer(queryset,many=True)
+                for elem in serializer.data:
+                    print(elem)
+                    if(elem['values'][0]['value']==name):
+                        return Response({"status": "success", "data": elem['ip']}, status=status.HTTP_200_OK)
+                return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
 
+        
+        # FOR THE APP TO POST THEIR IP ON START
+        elif request.method=='POST':
+            serializer = PayloadSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                _appIP = serializer.data['ip']
+                _appName = serializer.data['values'][0]['value']
+                print('APP IP RECEIVED:', _appIP)
+                print('APP MODEL:', _appName)
+                return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
+                    #call function to check empty fields and ranges
+                    
+        # FOR THE APP TO REMOVE THEY IP FROM THE DATABASE
+        elif request.method=='DELETE':
+            name = request.query_params['type']
+            print('DELETING MODEL:',name)
+            queryset1 = Payload.objects.filter(type='model_struct')
+            queryset2 = Payload.objects.filter(type='model_weight')
+            if queryset1.count() > 0 and queryset2.count() > 0:
+                queryset1.delete()
+                queryset2.delete()
+                
+                return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
+        
+        else:
+            #test how to read values from serializer data for ranges
+            return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+    @action(detail=False, methods=['get'])
     def sensor(self, request):
         if 'ip' not in request.query_params:
             queryset = Payload.objects.all()
