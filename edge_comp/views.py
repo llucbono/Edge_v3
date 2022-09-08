@@ -257,14 +257,20 @@ class PayloadViewSet(viewsets.ModelViewSet):
             if 'type' not in request.query_params:
                 return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                name = request.query_params['type']
-                print('ASK FOR MODEL OF:',name)
+                ipasked = request.query_params['type']
+                print('ASK FOR MODEL OF:', ipasked)
                 queryset = Payload.objects.filter(type='model_struct')
+                queryset2 = Payload.objects.filter(type='model_weight')
                 serializer = PayloadSerializer(queryset,many=True)
-                for elem in serializer.data:
-                    print(elem)
-                    if(elem['values'][0]['value']==name):
-                        return Response({"status": "success", "data": elem['ip']}, status=status.HTTP_200_OK)
+                serializer2 = PayloadSerializer(queryset2,many=True)
+                for elem_struct in serializer.data:
+                    if(elem_struct["ip"]== ipasked):
+                        struct = elem_struct['values'][0]['value']
+                for elem_weight in serializer2.data:
+                    if(elem_weight["ip"]== ipasked):
+                        weight = elem_weight['values'][0]['value']
+                if(struct != None and weight != None):
+                    return Response({"status": "success", "data": (struct, weight)}, status=status.HTTP_200_OK)
                 return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
 
         
