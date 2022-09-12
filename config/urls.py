@@ -10,6 +10,7 @@ import edge_comp.views as ec_views
 
 router = routers.SimpleRouter()
 router.register(r'payloads', ec_views.PayloadViewSet,r'payloads')
+router.register(r'appdata', ec_views.AppDataViewSet,r'appdata')
 #router.register(r'postview', ec_views.PostView.as_view(),r'postview')
 
 urlpatterns = [

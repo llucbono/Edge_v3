@@ -25,6 +25,15 @@ class Payload(models.Model):
     date = models.BigIntegerField(default=0)
     values = models.JSONField()
 
+
+class AppData(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    valid = models.BooleanField(null=False)
+    ip = models.CharField(max_length=200,default='0')
+    type = models.CharField(max_length=200,default='BatPlug')
+    date = models.BigIntegerField(default=0)
+    values = models.JSONField()
+
 """
 TODO:
 
