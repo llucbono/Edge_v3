@@ -162,8 +162,7 @@ class AppDataViewSet(viewsets.ModelViewSet):
                 print('APP IP RECEIVED:', _appIP)
                 
                 return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
-                    #call function to check empty fields and ranges
-                    
+
         # FOR THE APP TO REMOVE THEY IP FROM THE DATABASE
         elif request.method=='DELETE':
             name = request.query_params['type']
@@ -179,7 +178,7 @@ class AppDataViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post','get','delete'])
     def appModel(self, request):
-        # TO GET THE IP OF AN APOP GIVEN ITS NAME
+        # TO GET THE AI MODEL 
         if request.method=='GET':
             if 'type' not in request.query_params:
                 return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
@@ -200,8 +199,7 @@ class AppDataViewSet(viewsets.ModelViewSet):
                     return Response({"status": "success", "data": (struct, weight)}, status=status.HTTP_200_OK)
                 return Response({"status": "fail", "data": "Item not found"}, status=status.HTTP_400_BAD_REQUEST)
 
-        
-        # FOR THE APP TO POST THEIR IP ON START
+        # FOR THE APP TO POST THEIR TRAINED AI MODEL
         elif request.method=='POST':
             serializer = AppDataSerializer(data=request.data)
             if serializer.is_valid():
@@ -213,20 +211,22 @@ class AppDataViewSet(viewsets.ModelViewSet):
                 return Response({"status": "success", "data": serializer.data},status=status.HTTP_200_OK)
                     #call function to check empty fields and ranges
                     
-        # FOR THE APP TO REMOVE THEY IP FROM THE DATABASE
+        # FOR THE APP TO REMOVE THE AI TRAINED MODEL
         elif request.method=='DELETE':
-            name = request.query_params['type']
-            print('DELETING MODEL:',name)
-            queryset1 = AppData.objects.filter(type='model_struct')
-            queryset2 = AppData.objects.filter(type='model_weight')
-            if queryset1.count() > 0 and queryset2.count() > 0:
-                queryset1.delete()
+            typee = request.query_params['type']
+            print('DELETING MODEL:', typee)
+            if(typee=='model_struct'):
+                queryset1 = AppData.objects.filter(type='model_struct')
+            elif(typee=='model_weight'):
+                queryset2 = AppData.objects.filter(type='model_weight')
+            if queryset1.count() > 0:
+                queryset1.delete()                
+                return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
+            elif queryset2.count() > 0:
                 queryset2.delete()
-                
                 return Response({"status": "success", "data": "Item Deleted"},status=status.HTTP_200_OK)
         
         else:
-            #test how to read values from serializer data for ranges
             return Response({"data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
     permission_classes = []
