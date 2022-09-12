@@ -13,8 +13,9 @@ machine after installing Docker.
 The execution of this application only requires the download of the directory and its
 execution via Docker Compose.
 So once you have made sure that Docker is installed on the machine where it is to
-be run, simply run the following command in the terminal:
+be run, simply run the two following command in the terminal:
 ```
+docker-compose -f local.yml build
 docker-compose -f local.yml up
 ```
 To call the API via any **Python** program you should use the following interface: https://github.com/jbaudru/RESTful-app-and-interface/blob/main/appInterface.py

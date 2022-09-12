@@ -23,4 +23,16 @@ class Migration(migrations.Migration):
                 ('values', models.JSONField()),
             ],
         ),
+        migrations.CreateModel(
+            name='AppData',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('valid', models.BooleanField()),
+                ('ip', models.CharField(default='0', max_length=200)),
+                ('type', models.CharField(default='BatPlug', max_length=200)),
+                ('date', models.BigIntegerField(default=0)),
+                ('values', models.JSONField()),
+            ],
+        ),
     ]

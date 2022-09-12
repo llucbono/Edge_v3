@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Payload, SENSORS
+from .models import Payload, AppData, SENSORS
 
 
 
@@ -7,6 +7,12 @@ class PayloadSerializer(serializers.ModelSerializer):
     valid = serializers.BooleanField(default= True)
     class Meta:
         model = Payload
+        fields = ['id','ip','date', 'type', 'created','valid','values']
+
+class AppDataSerializer(serializers.ModelSerializer):
+    valid = serializers.BooleanField(default= True)
+    class Meta:
+        model = AppData
         fields = ['id','ip','date', 'type', 'created','valid','values']
 
 
