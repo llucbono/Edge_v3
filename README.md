@@ -20,7 +20,6 @@ docker-compose -f local.yml up
 ```
 To call the API via any **Python** program you should use the following interface: https://github.com/jbaudru/RESTful-app-and-interface/blob/main/appInterface.py
 
-The documentation of the interface is available here: https://github.com/jbaudru/RESTful-app-and-interface/blob/main/Interface%20Documentation.pdf  
 
 ## Scheme
 The scheme of this API only contains one generic model. This model aims to
